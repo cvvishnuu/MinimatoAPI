@@ -1,0 +1,1 @@
+INSERT INTO canteen(canteen_name,email,phone_no,password,adderes,profile_name,current_status) VALUES ('abc','sss','6555','ddd','sdsfd','dfd','dff')
