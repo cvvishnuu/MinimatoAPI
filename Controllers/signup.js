@@ -5,7 +5,7 @@ const handleSignup = async (req, res, pool) =>{
             'INSERT INTO canteen(canteen_name, email, phone_no, password) VALUES ($1,$2,$3,$4)',
             [canteenName,email,phoneNumber,password]
         )
-        res.redirect('');
+        res.json({confirm: 'true'});
     } catch (error) {
         console.log(error);
         res.status(400).json('unable to register');

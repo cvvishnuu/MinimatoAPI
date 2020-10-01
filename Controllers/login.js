@@ -1,5 +1,4 @@
 const handleLogin =  async (req,res,pool)=>{
-    //res.send('im login')
     try{
         const {email, password} =  req.body;
         const result = await pool.query('SELECT * FROM canteen WHERE email=$1 AND password=$2 ',[email,password] )
@@ -14,7 +13,6 @@ const handleLogin =  async (req,res,pool)=>{
         console.log(err);
         res.status(400).json('something went wrong');
     }
-    
 }
 
 module.exports ={handleLogin}
