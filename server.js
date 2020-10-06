@@ -1,22 +1,21 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const pool = require('./db');
+const express = require('express'); // Importing express framework for building our server.
+const bodyParser = require('body-parser'); //Importing body parser to parse the request json objects so that we can process them.
+const pool = require('./db'); 
 const cors =require('cors')
-const session = require('express-session');
-const bcrypt = require('bcrypt'); //Bcrypt package required for encrypting incoming password
+const session = require('express-session'); // Importing the session middleware for creating our session and session store.
+const bcrypt = require('bcrypt'); //Bcrypt package required for encrypting incoming password.
 const passport = require('passport');
-const passportLocal = require('passport-local').Strategy;
 const pgSession = require('connect-pg-simple')(session);
+
 //----------------------------------------END OF IMPORTS -------------------------------------------------------//
 
 const app = express();
+
 //controllers
 const signup = require('./Controllers/signup');
-// const login = require('./Controllers/login');
 
 //Middleware
-
-app.use(bodyParser.json()) // for parsing application/json
+app.use(bodyParser.json()) // For parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors())
 
@@ -38,16 +37,11 @@ app.use(session({
     
 }))
 
-require('./passportConfig');
+require('./passportConfig'); //Requiring our local strategy.
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-// app.use((req, res, next) => {
-//     console.log(req.session);
-//     console.log(req.user)
-//     next();
-// })
 
 //routes
 app.get('/business',  (req, res) => {

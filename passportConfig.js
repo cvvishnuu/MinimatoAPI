@@ -10,18 +10,13 @@ const customFields = {
 };
 
 const verifyCallback = async (username, password, done) => {
-    console.log(username);
-    console.log(password);
     await pool.query('SELECT * FROM canteen WHERE email = $1', [username], async (err, result) => {
         if(err) return done (err);
         if(result.rows.length > 0) {
             const user = result.rows[0];
-            console.log(user);
            if(await bcrypt.compare(password, user.password)) {
-                console.log('true')
                 return done(null, user)
             } else {
-                console.log('it dosent match')
                 return done(' either email or Password incorrect', null)
             }
         }
