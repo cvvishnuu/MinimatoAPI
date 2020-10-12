@@ -67,8 +67,18 @@ app.use(passport.initialize());
 /*------------------------------------------------ canteen routes--------------------------------------------------------------------*/
 app.post('/business/signup', (req, res) => {signupCanteen.handleSignup(req, res, pool, bcrypt)})
 app.post('/business/login', (req, res) => {loginCanteen.handleLogin(req, res, pool, bcrypt)})
-app.get('/business/dashboard',passport.authenticate('jwt-canteen-signin', {session:false}), (req, res) => {
-    res.status(200).json({ success: true, msg: "You are successfully authenticated to canteen route"});
+app.get('/business/profile',passport.authenticate('jwt-canteen-signin', {session:false}), (req, res) => {
+    res.status(200).json({ 
+        success: true, 
+        msg: "You are successfully authenticated to canteen route",
+        payload:{
+            id: req.user.canteen_id,
+            name: req.user.canteen_name,
+            email: req.user.email,
+            phone_no: req.user.phone_no,
+            address: req.user.address
+        }
+    });
 })
 //     passport.authenticate("local", (err, user )=> {
 //         if(err){

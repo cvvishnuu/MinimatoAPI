@@ -20,28 +20,32 @@ function issueJwt(user) {
 }
 
 const handleLogin = async (req, res, pool, bcrypt) => {
-    const { email, password } = req.body;
-    await pool.query('SELECT * FROM canteen WHERE email = $1', [email], async (err, result) => {
-        if(err) {
-            res.status(401).json({
-                success: false
-            })
-        }
-        const user = result.rows[0];
-        if(user) {
-            if(await bcrypt.compare(password, user.password)) {
-                console.log('password matches')
-                const generateToken = issueJwt(user);
-                res.status(200).json({ success: true, token: generateToken.token, expiresIn: generateToken.expires });
+    try {
+        const { email, password } = req.body;
+        await pool.query('SELECT * FROM canteen WHERE email = $1', [email], async (err, result) => {
+            if(err) {
+                res.status(401).json({
+                    success: false
+                })
+            }
+            const user = result.rows[0];
+            if(user) {
+                if(await bcrypt.compare(password, user.password)) {
+                    const generateToken = issueJwt(user);
+                    res.status(200).json({ success: true, token: generateToken.token, expiresIn: generateToken.expires });
+                }
+                else{
+                    res.json({success: false, message:'wrong username or password'})
+                }
             }
             else{
-                res.status(401).json({message:'wrong username or password'})
+                res.json({success: false, message:'wrong username or password'})
             }
-        }
-        else{
-            res.status(401).json({message:'wrong username or password'})
-        }
-    })  
+        })  
+    } catch (error) {
+        res.status(401).json({success: false, message: "Error"});
+        
+    }
 }
 
 module.exports = {handleLogin}

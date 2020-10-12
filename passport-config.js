@@ -36,7 +36,6 @@ const client_Startegy = new JwtStrategy(options, async (payload, done) => {
             return done(null, false);
         }
     })
-
 })
 /*-------------------------------------------------------canteen----------------------------------------------------------------------*/
 
