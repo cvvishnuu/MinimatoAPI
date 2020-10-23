@@ -28,7 +28,7 @@ app.use(bodyParser.json()) // For parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors({
     credentials: true,
-    origin: 'http://localhost:3000'
+    origin: ['http://localhost:3000','http://localhost:8000']
 }))
 
 // app.use(session({
@@ -80,6 +80,7 @@ app.get('/business/profile',passport.authenticate('jwt-canteen-signin', {session
         }
     });
 })
+
 //     passport.authenticate("local", (err, user )=> {
 //         if(err){
 //             return res.json({message:'oops  somithing wrong'});
@@ -110,8 +111,29 @@ app.get('/business/profile',passport.authenticate('jwt-canteen-signin', {session
 
 app.post('/student/signup', (req, res) => {registerClient.handleSignup(req, res, pool, bcrypt)});
 app.post('/student/login', (req, res) => {loginClient.handleLogin(req, res, pool, bcrypt)});
+app.get('/student/viewprofile', passport.authenticate('jwt-client-signin', {session:false}), (req, res) => {
+    res.status(200).json({
+         success: true,
+         msg: "You are successfully authenticated to this route!",
+         payload: {
+            id: req.user.client_id,
+            name: req.user.client_name,
+            email: req.user.email,
+            phone_no: req.user.phone_no,
+            address: req.user.address,
+            gender:req.user.gender
+        }
+    });
+})
 app.get('/student/dashboard', passport.authenticate('jwt-client-signin', {session:false}), (req, res) => {
-    res.status(200).json({ success: true, msg: "You are successfully authenticated to this route!"});
+    res.status(200).json({
+         success: true,
+         msg: "You are successfully authenticated to this route!",
+         payload: {
+            id: req.user.client_id,
+            name: req.user.client_name
+        }
+    });
 })
 
 

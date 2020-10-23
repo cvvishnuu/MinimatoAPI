@@ -1,5 +1,5 @@
 const handleSignup = async (req, res, pool,bcrypt) => {
-    try{
+    try {
         const {clientName, email, phoneNumber, gender, password} = req.body;
 
         const pass = await bcrypt.hash(password, 10);
@@ -8,12 +8,10 @@ const handleSignup = async (req, res, pool,bcrypt) => {
             [clientName, email, phoneNumber, gender, pass ]
         )
         res.json({confirm:'success'});   
-    }
-    catch(err){
+    } catch (err) {
         console.log(err)
         res.send('unable to register')
     }
-
 }
 
-module.exports = {handleSignup}
+module.exports = { handleSignup }

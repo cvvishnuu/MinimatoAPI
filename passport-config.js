@@ -37,6 +37,7 @@ const client_Startegy = new JwtStrategy(options, async (payload, done) => {
         }
     })
 })
+
 /*-------------------------------------------------------canteen----------------------------------------------------------------------*/
 
 // payload is extracted from the token which is mentioned above in the option i.e ExractJwt
@@ -58,7 +59,6 @@ const canteen_Startegy = new JwtStrategy(options, async (payload, done) => {
             return done(null, false);
         }
     })
-
 })
 
 /*-----------------------------------------------exports-----------------------------------------------------------------------------------*/
