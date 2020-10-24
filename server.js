@@ -135,6 +135,7 @@ app.get('/student/dashboard', passport.authenticate('jwt-client-signin', {sessio
         }
     });
 })
+app.put('/student/editprofile', (req, res) => {})
 
 
 
