@@ -22,6 +22,8 @@ const loginCanteen = require('./Controllers/canteenSignin');
 //student controllers
 const registerClient = require('./Controllers/clientSignup');
 const loginClient = require('./Controllers/clientSignin');
+const clientDashboard = require('./Controllers/clientDashboard');
+const clientEditProfile = require('./Controllers/clientEditProfile');
 
 //Middleware
 app.use(bodyParser.json()) // For parsing application/json
@@ -111,31 +113,8 @@ app.get('/business/profile',passport.authenticate('jwt-canteen-signin', {session
 
 app.post('/student/signup', (req, res) => {registerClient.handleSignup(req, res, pool, bcrypt)});
 app.post('/student/login', (req, res) => {loginClient.handleLogin(req, res, pool, bcrypt)});
-app.get('/student/viewprofile', passport.authenticate('jwt-client-signin', {session:false}), (req, res) => {
-    res.status(200).json({
-         success: true,
-         msg: "You are successfully authenticated to this route!",
-         payload: {
-            id: req.user.client_id,
-            name: req.user.client_name,
-            email: req.user.email,
-            phone_no: req.user.phone_no,
-            address: req.user.address,
-            gender:req.user.gender
-        }
-    });
-})
-app.get('/student/dashboard', passport.authenticate('jwt-client-signin', {session:false}), (req, res) => {
-    res.status(200).json({
-         success: true,
-         msg: "You are successfully authenticated to this route!",
-         payload: {
-            id: req.user.client_id,
-            name: req.user.client_name
-        }
-    });
-})
-app.put('/student/editprofile', (req, res) => {})
+app.get('/student/dashboard', passport.authenticate('jwt-client-signin', {session:false}), (req, res) => {clientDashboard.handleClientDashboard(req, res)});
+app.put('/student/editprofile', passport.authenticate('jwt-client-signin', {session:false}), (req, res) => {clientEditProfile.handleClientEditProfile(req, res, pool)});
 
 
 
