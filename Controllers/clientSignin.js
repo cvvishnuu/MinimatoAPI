@@ -40,7 +40,12 @@ const handleLogin = async (req, res, pool, bcrypt) => {
             if(user) {
                 if(await bcrypt.compare(password, user.password)) {
                     const generateToken = issueJwt(user);
-                    res.status(200).json({ success: true, token: generateToken.token, expiresIn: generateToken.expires });
+                    res.status(200).json({
+                        success: true, 
+                        token: generateToken.token, 
+                        expiresIn: generateToken.expires,
+                        id: user.client_id
+                    });
                 }
                 else{
                     res.status(401).json({message:'wrong username or password'})

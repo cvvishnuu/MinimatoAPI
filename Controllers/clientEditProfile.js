@@ -19,12 +19,12 @@ const handleClientEditProfile = async (req, res, pool) => {
                     address: user.address,
                     gender: user.gender
                 }
-            })})
+            })
+        })
     } 
     catch (error) {
         console.log(error)
         res.status(400).json("Error please try again later");
-        
     }
 }
 

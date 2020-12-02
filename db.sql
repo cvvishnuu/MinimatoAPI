@@ -17,5 +17,13 @@ CREATE TABLE student (
     phone_no VARCHAR(15) NOT NULL UNIQUE,
     gender  VARCHAR (10) ,
     address VARCHAR(100),
-    password VARCHAR(100) NOT NULL
+    password VARCHAR(100) NOT NULL 
+);
+
+CREATE TABLE images (
+    image_id BIGSERIAL NOT NULL PRIMARY KEY,
+    image_name VARCHAR(150) NOT NULL,
+    image BYTEA NOT NULL,
+    client_id INT,
+    FOREIGN KEY (client_id) REFERENCES student(client_id)
 );
