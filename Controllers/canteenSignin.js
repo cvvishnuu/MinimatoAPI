@@ -21,6 +21,7 @@ function issueJwt(user) {
 
 const handleLogin = async (req, res, pool, bcrypt) => {
     try {
+        console.log(req.body);
         const { email, password } = req.body;
         await pool.query('SELECT * FROM canteen WHERE email = $1', [email], async (err, result) => {
             if(err) {
