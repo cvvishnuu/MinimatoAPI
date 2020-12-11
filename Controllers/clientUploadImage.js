@@ -1,11 +1,11 @@
 const handleUploadImage = async (req, res, pool) => {
     try { 
-        const { id } = req.body
-        const { name, data } = req.files.picture;
+        const { client_id } = req.user;
+        const url = `/uploads/${req.file.originalname}`
         // await pool.query('UPDATE student SET client_name = $1, WHERE client_id = $2', ["name", id])
         // await pool.query('UPDATE student SET client_name = $1, WHERE client_id = $2', [name,id])
         // await pool.query('UPDATE student SET image_name = $1, image = $2 WHERE client_id = $3', [name, data, id])
-        await pool.query("SELECT * FROM images WHERE client_id = $1", [id] , async (err, result) => {
+        await pool.query("SELECT * FROM images WHERE client_id = $1", [client_id] , async (err, result) => {
             if(err) {
                 res.status(401).json({
                     success: false
@@ -14,8 +14,8 @@ const handleUploadImage = async (req, res, pool) => {
             if(!result.rows[0]) {
                 try {  
                     await pool.query(
-                        'INSERT INTO images(image_name, image, client_id) VALUES($1,$2,$3)', 
-                        [ name, data, id ]
+                        'INSERT INTO images(imageurl, client_id) VALUES($1,$2)', 
+                        [ url, client_id ]
                     );
                     res.status(200).json({
                         success: true,
@@ -28,7 +28,7 @@ const handleUploadImage = async (req, res, pool) => {
                 
             } else {
                 try {
-                    await pool.query('UPDATE images SET image_name = $1, image = $2 WHERE client_id = $3', [name, data, id])
+                    await pool.query('UPDATE images SET imageurl = $1, WHERE client_id = $2', [url, client_id])
                     res.status(200).json({
                         success: true,
                         msg: 'Updated'

@@ -10,15 +10,11 @@ CREATE TABLE canteen (
     password VARCHAR(100) NOT NULL,
     address VARCHAR(100),
     profile_name VARCHAR(50),
-    current_status VARCHAR(10)   
+    current_status VARCHAR(10),
+    imageURL VARCHAR(100) UNIQUE
 );
 
-CREATE TABLE canteenImages (
-    imageID BIGSERIAL NOT NULL PRIMARY KEY,
-    canteen_id INT,
-    imageURL VARCHAR(100) UNIQUE,
-    FOREIGN KEY (canteen_id) REFERENCES canteen(canteen_id)
-);
+
 
 CREATE TABLE starters(
     food_name VARCHAR(50) NOT NULL UNIQUE,
@@ -66,10 +62,11 @@ CREATE TABLE student (
 
 CREATE TABLE images (
     image_id BIGSERIAL NOT NULL PRIMARY KEY,
-    image_name VARCHAR(150) NOT NULL,
-    image BYTEA NOT NULL,
+    imageurl VARCHAR(150) NOT NULL,
     client_id INT,
     FOREIGN KEY (client_id) REFERENCES student(client_id)
 );
+
+
 
 
