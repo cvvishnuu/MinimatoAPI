@@ -2,11 +2,17 @@ const express = require('express'); // Importing express framework for building 
 const bodyParser = require('body-parser'); //Importing body parser to parse the request json objects so that we can process them.
 const multer = require('multer');
 const pool = require('./db'); 
-const cors = require('cors')
+const cors = require('cors');
 const fileupload = require('express-fileupload');
+require('dotenv').config()
 //const session = require('express-session'); // Importing the session middleware for creating our session and session store.
 const bcrypt = require('bcrypt'); //Bcrypt package required for encrypting incoming password.
 const passport = require('passport');
+
+const client = require('twilio')(
+    process.env.TWILIO_ACCOUNT_SID,
+    process.env.TWILIO_AUTH_TOKEN
+  );
 //const pgSession = require('connect-pg-simple')(session);
 
 const app = express();
@@ -59,6 +65,7 @@ const storage = multer.diskStorage({
 //Middleware
 app.use(bodyParser.json()) // For parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }))
+
 const upload = multer({
     storage: storage
 });
@@ -80,8 +87,10 @@ const signupCanteen = require('./Controllers/canteenSignup');
 const loginCanteen = require('./Controllers/canteenSignin');
 const canteenProfile = require('./Controllers/canteenProfile');
 const canteenEditProfile = require('./Controllers/canteenEditProfile');
-const canteenPrimaryMenu = require('./Controllers/canteenPrimaryMenu')
-const canteenGetPrimaryMenu = require('./Controllers/canteenGetPrimaryMenu')
+const canteenPrimaryMenu = require('./Controllers/canteenPrimaryMenu');
+const canteenGetPrimaryMenu = require('./Controllers/canteenGetPrimaryMenu');
+const canteenIncomingOrder = require('./Controllers/canteenIncomingOrder');
+
 
 //student controllers
 const registerClient = require('./Controllers/clientSignup');
@@ -90,6 +99,8 @@ const clientDashboard = require('./Controllers/clientDashboard');
 const clientEditProfile = require('./Controllers/clientEditProfile');
 const clientUploadImage = require('./Controllers/clientUploadImage');
 const clientGetSearchResults = require('./Controllers/clientGetSearchResults');
+const clientGetMenu = require('./Controllers/clientGetMenu');
+const clientOrder = require('./Controllers/clientOrder')
 
 
 
@@ -165,6 +176,23 @@ app.post('/business/uploadImage', passport.authenticate('jwt-canteen-signin', {s
     }
 })
 
+app.post('/api/messages', (req, res) => {
+    res.header('Content-Type', 'application/json');
+    console.log(req.body)
+    client.messages
+      .create({
+        from: process.env.TWILIO_PHONE_NUMBER,
+        to: req.body.to,
+        body: req.body.body
+      })
+      .then(() => {
+        res.send(JSON.stringify({ success: true }));
+      })
+      .catch(err => {
+        console.log(err);
+        res.send(JSON.stringify({ success: false }));
+      });
+  });
 
 /*--------------------------------GET ROUTES---------------------------------------------------------------------- */
 
@@ -174,8 +202,8 @@ app.get('/business/primary_menu', passport.authenticate('jwt-canteen-signin', {s
     const { canteen_id } = req.user;
     const starters= await pool.query("SELECT * FROM starters WHERE canteen_id = $1", [canteen_id])
     const maincourse = await pool.query("SELECT * FROM maincourse WHERE canteen_id = $1", [canteen_id])
-    const  deserts = await pool.query("SELECT * FROM deserts WHERE canteen_id = $1", [canteen_id])
-    const  drinks = await pool.query("SELECT * FROM drinks WHERE canteen_id = $1", [canteen_id])
+    const deserts = await pool.query("SELECT * FROM deserts WHERE canteen_id = $1", [canteen_id])
+    const drinks = await pool.query("SELECT * FROM drinks WHERE canteen_id = $1", [canteen_id])
     res.json({
         starters: starters.rows,
         maincourse: maincourse.rows,
@@ -212,7 +240,7 @@ app.get('/business/getImage', passport.authenticate('jwt-canteen-signin', {sessi
     }
     
 })
-
+app.get('/business/incomingorder', passport.authenticate('jwt-canteen-signin', {session:false}), (req, res) => {canteenIncomingOrder.handleIncomingOrder(req,res,pool)})
 
 /*--------------------------------PUT ROUTES---------------------------------------------------------------------- */
 
@@ -227,7 +255,7 @@ app.put('/business/editprofile', passport.authenticate('jwt-canteen-signin', {se
 app.post('/student/signup', (req, res) => {registerClient.handleSignup(req, res, pool, bcrypt)});
 app.post('/student/login', (req, res) => {loginClient.handleLogin(req, res, pool, bcrypt)});
 app.post('/student/uploadImage', passport.authenticate('jwt-client-signin', {session:false}), upload.single('picture'), (req, res) => {clientUploadImage.handleUploadImage(req, res, pool)})
-
+app.post('/student/order', passport.authenticate('jwt-client-signin', {session:false}), (req, res) => {clientOrder.handleClientOrder(req, res, pool)})
 
 /*--------------------------------GET ROUTES---------------------------------------------------------------------- */
 
@@ -269,7 +297,7 @@ app.get('/student/getCanteenDetails', async(req, res) => {
 
 app.get('/student/searchresults', (req, res) => {clientGetSearchResults.handleGetSearchResults(req, res, pool)})
 
-
+app.get('/student/menu', (req,res) => {clientGetMenu.handleGetMenu(req,res,pool)})
 
 
 

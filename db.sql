@@ -68,5 +68,18 @@ CREATE TABLE images (
 );
 
 
+/*----------------------------Orders---------------------------------*/
 
+CREATE TABLE scheduler (
+    order_id BIGSERIAL NOT NULL PRIMARY KEY,
+    canteen_id INT,
+    client_id INT,
+    client_name VARCHAR(50) NOT NULL,
+    client_email VARCHAR(50) NOT NULL,
+    client_phone_no VARCHAR(15) NOT NULL,
+    orders json NOT NULL,
+    status VARCHAR(50),
+    FOREIGN KEY (client_id) REFERENCES student(client_id),
+    FOREIGN KEY (canteen_id) REFERENCES canteen(canteen_id)
+);
 
