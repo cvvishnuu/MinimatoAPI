@@ -19,6 +19,7 @@ CREATE TABLE canteen (
 CREATE TABLE starters(
     food_name VARCHAR(50) NOT NULL UNIQUE,
     price VARCHAR(50) NOT NULL,
+    imageURL VARCHAR(100) UNIQUE,
     canteen_id INT,
     status VARCHAR(6) NOT NULL,
     FOREIGN KEY (canteen_id) REFERENCES canteen(canteen_id)
@@ -26,7 +27,8 @@ CREATE TABLE starters(
 
 CREATE TABLE deserts(
     food_name VARCHAR(50) NOT NULL UNIQUE,
-    price VARCHAR(50) NOT NULL,vvc
+    price VARCHAR(50) NOT NULL,
+    imageURL VARCHAR(100) UNIQUE,
     canteen_id INT,
     status VARCHAR(6) NOT NULL,
     FOREIGN KEY (canteen_id) REFERENCES canteen(canteen_id)
@@ -35,6 +37,7 @@ CREATE TABLE deserts(
 CREATE TABLE maincourse(
     food_name VARCHAR(50) NOT NULL UNIQUE,
     price VARCHAR(50) NOT NULL,
+    imageURL VARCHAR(100) UNIQUE,
     canteen_id INT,
     status VARCHAR(6) NOT NULL,
     FOREIGN KEY (canteen_id) REFERENCES canteen(canteen_id)
@@ -43,9 +46,17 @@ CREATE TABLE maincourse(
 CREATE TABLE drinks(
     food_name VARCHAR(50) NOT NULL UNIQUE,
     price VARCHAR(50) NOT NULL,
+    imageURL VARCHAR(100) UNIQUE,
     canteen_id INT,
     status VARCHAR(6) NOT NULL,
     FOREIGN KEY (canteen_id) REFERENCES canteen(canteen_id)
+);
+
+CREATE TABLE FoodImages (
+    image_id BIGSERIAL NOT NULL PRIMARY KEY,
+    imageurl VARCHAR(150) NOT NULL,
+    can_id INT,
+    FOREIGN KEY (client_id) REFERENCES student(client_id)
 );
 
 /*----------------------------students---------------------------------*/

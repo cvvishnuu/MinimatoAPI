@@ -3,7 +3,7 @@ const bodyParser = require('body-parser'); //Importing body parser to parse the 
 const multer = require('multer');
 const pool = require('./db'); 
 const cors = require('cors');
-const fileupload = require('express-fileupload');
+// const fileupload = require('express-fileupload');
 require('dotenv').config()
 //const session = require('express-session'); // Importing the session middleware for creating our session and session store.
 const bcrypt = require('bcrypt'); //Bcrypt package required for encrypting incoming password.
@@ -30,8 +30,7 @@ const storage = multer.diskStorage({
         const currentDate = new Date();
         const timestamp = currentDate.getTime();
         if(req.user.canteen_id){
-            const path = `${req.user.canteen_id}${file.originalname}`
-            console.log(typeof(path))
+            const path = `${req.user.canteen_id}${file.originalname}`            
             file.originalname = path
             cb(null, file.originalname)
         } else {            
@@ -63,7 +62,7 @@ const storage = multer.diskStorage({
   
 
 //Middleware
-app.use(bodyParser.json()) // For parsing application/json
+app.use(bodyParser.json({limit: '50mb'})) // For parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }))
 
 const upload = multer({
@@ -90,6 +89,7 @@ const canteenEditProfile = require('./Controllers/canteenEditProfile');
 const canteenPrimaryMenu = require('./Controllers/canteenPrimaryMenu');
 const canteenGetPrimaryMenu = require('./Controllers/canteenGetPrimaryMenu');
 const canteenIncomingOrder = require('./Controllers/canteenIncomingOrder');
+const canteenUploadFoodImage = require('./Controllers/canteenUploadFoodImage')
 
 
 //student controllers
@@ -176,6 +176,44 @@ app.post('/business/uploadImage', passport.authenticate('jwt-canteen-signin', {s
     }
 })
 
+app.post('/business/uploadFoodImage', passport.authenticate('jwt-canteen-signin', {session:false}), upload.fields([
+    { 
+        name:'starters' 
+    },
+    { 
+        name:'maincourse' 
+    },
+    { 
+        name:'deserts' 
+    },
+    { 
+        name:'drinks' 
+    },
+]), async(req, res) => {
+    try {
+        const { canteen_id } = req.user;
+        const starters = req.files.starters
+        const maincourse = req.files.maincourse
+        const deserts = req.files.deserts
+        const drinks = req.files.drinks
+        console.log(starters);
+        console.log(maincourse);
+        console.log(deserts);
+        console.log(drinks);
+        // const url = `/uploads/${req.file.originalname}`
+        // await pool.query('UPDATE canteen SET imageurl= $1 WHERE canteen_id = $2', [url, canteen_id])
+    } catch (error) {
+        console.log(error)
+        res.status(404).json({
+            payload:{
+                success: false,
+                mssg:"this is the reason"
+            }
+        })
+    }
+    
+});
+
 app.post('/api/messages', (req, res) => {
     res.header('Content-Type', 'application/json');
     console.log(req.body)
@@ -237,9 +275,9 @@ app.get('/business/getImage', passport.authenticate('jwt-canteen-signin', {sessi
         })
     } catch (error) {
         console.log(error);
-    }
-    
+    } 
 })
+
 app.get('/business/incomingorder', passport.authenticate('jwt-canteen-signin', {session:false}), (req, res) => {canteenIncomingOrder.handleIncomingOrder(req,res,pool)})
 
 /*--------------------------------PUT ROUTES---------------------------------------------------------------------- */
