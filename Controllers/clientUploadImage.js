@@ -4,6 +4,7 @@ const handleUploadImage = async (req, res, pool) => {
         const url = `/uploads/${req.file.originalname}`
         console.log("url "+url);
         console.log("id "+client_id);
+        console.log("test")
         // await pool.query('UPDATE student SET client_name = $1, WHERE client_id = $2', ["name", id])
         // await pool.query('UPDATE student SET client_name = $1, WHERE client_id = $2', [name,id])
         // await pool.query('UPDATE student SET image_name = $1, image = $2 WHERE client_id = $3', [name, data, id])
