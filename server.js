@@ -102,6 +102,9 @@ const clientGetSearchResults = require('./Controllers/clientGetSearchResults');
 const clientGetMenu = require('./Controllers/clientGetMenu');
 const clientOrder = require('./Controllers/clientOrder')
 
+//health check
+const healthCheck = require('./Controllers/healthCheck')
+
 
 
 // app.use(fileupload());
@@ -353,6 +356,10 @@ app.put('/student/editprofile', passport.authenticate('jwt-client-signin', {sess
 
 
 
+
+/*---------------------------------------------------------------------health check----------------------------------------------------------------*/
+
+app.get('/health', (req, res) => { healthCheck.handleHealthCheck(req, res, pool) });
 
 /*----------------------------------------------------------------------port----------------------------------------------------------------------*/
 
