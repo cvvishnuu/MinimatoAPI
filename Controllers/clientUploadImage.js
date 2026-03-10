@@ -12,6 +12,7 @@ const handleUploadImage = async (req, res, pool) => {
                 res.status(401).json({
                     success: false
                 })
+                console.log(res)
             }
             if(!result.rows[0]) {
                 try {  
